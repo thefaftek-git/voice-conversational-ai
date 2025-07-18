@@ -1,11 +1,12 @@
+
 # Voice Conversational AI
 
-This project aims to develop a new voice conversational AI model. The initial implementation includes a Python script that uses Whisper X to convert MP3 files to transcripts.
+This project aims to develop a new voice conversational AI model. The initial implementation includes a Python script that uses Whisper to convert MP3 files to transcripts.
 
 ## Features
 
-- Speech-to-text transcription using Whisper X
-- Support for MP3 audio files
+- Speech-to-text transcription using OpenAI's Whisper model
+- Support for MP3 audio files  
 - Easy-to-use Python interface
 
 ## Getting Started
@@ -47,3 +48,4 @@ print(transcript)
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
+

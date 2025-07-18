@@ -1,7 +1,10 @@
+
 # Core dependencies
-whisper-x>=0.1.0
+openai-whisper>=1.0.0
 
 # Development dependencies
 pytest
 black
 flake8
+
+
