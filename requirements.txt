@@ -17,4 +17,6 @@ pytest
 black
 flake8
 
+# Python version requirement
+python_version >= 3.9
 
