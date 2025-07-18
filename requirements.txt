@@ -2,6 +2,16 @@
 # Core dependencies
 openai-whisper>=1.0.0
 
+# Live transcription dependencies
+pyaudio
+webrtcvad
+faster-whisper
+sciPy
+soundfile
+halo
+pvporcupine
+openwakeword
+
 # Development dependencies
 pytest
 black
