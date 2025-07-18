@@ -10,6 +10,7 @@ This project aims to develop a new voice conversational AI model. The initial im
   - Voice Activity Detection (VAD)
   - Wake word detection support
   - Low-latency real-time processing
+  - Automatic GPU/CPU detection and fallback
 - Support for MP3 audio files and live microphone input
 
 ## Getting Started
@@ -46,7 +47,7 @@ print(transcript)
 
 ### Live Audio Transcription
 
-For real-time transcription from a microphone:
+For real-time transcription from a microphone (auto-detects CUDA):
 
 ```python
 from src.live_transcription import LiveTranscriber
@@ -54,17 +55,15 @@ from src.live_transcription import LiveTranscriber
 def handle_transcript(text):
     print(f"Live transcript: {text}")
 
-# Initialize and start transcription
+# Initialize and start transcription - auto-detects GPU/CPU
 transcriber = LiveTranscriber(
     model_size="tiny",  # Options: "tiny", "base", "small", "medium", "large"
-    device="cpu",      # Use "cuda" for GPU acceleration
     on_transcript=handle_transcript,
     debug_mode=True
 )
 
 try:
     transcriber.start()
-
     print("Speak now... Press Ctrl+C to stop")
     while True:
         time.sleep(1)  # Keep main thread alive

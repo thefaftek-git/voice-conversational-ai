@@ -38,6 +38,14 @@ except ImportError as e:
         "pip install git+https://github.com/KoljaB/RealtimeSTT.git"
     ) from e
 
+def _is_cuda_available() -> bool:
+    """Check if CUDA is available on the system."""
+    try:
+        import torch
+        return torch.cuda.is_available()
+    except ImportError:
+        return False
+
 class LiveTranscriber:
     """
     A class for real-time audio transcription using RealtimeSTT.
@@ -49,7 +57,7 @@ class LiveTranscriber:
     def __init__(
         self,
         model_size: str = "tiny",
-        device: str = "cpu",
+        device: Optional[str] = None,  # Auto-detect
         gpu_device_index: int = 0,
         on_transcript: Optional[Callable[[str], None]] = None,
         debug_mode: bool = False
@@ -59,13 +67,27 @@ class LiveTranscriber:
 
         Args:
             model_size (str): Size of the Whisper model to use. Options: "tiny", "base", "small", "medium", "large"
-            device (str): Device to run inference on. Options: "cpu" or "cuda"
+            device (Optional[str]): Device to run inference on. Auto-detects if None.
+                                   Will try CUDA first, then fall back to CPU.
             gpu_device_index (int): GPU device index if using CUDA
             on_transcript (Callable[[str], None]): Callback function to handle transcribed text
             debug_mode (bool): Enable debug logging
         """
         self.model_size = model_size
-        self.device = device
+
+        # Auto-detect device if not specified
+        if device is None:
+            if _is_cuda_available():
+                self.device = "cuda"
+                logging.info("CUDA available, using GPU for transcription")
+            else:
+                self.device = "cpu"
+                logging.info("CUDA not available, falling back to CPU")
+
+        # If device was explicitly specified, use it
+        else:
+            self.device = device
+
         self.gpu_device_index = gpu_device_index
         self.on_transcript = on_transcript
         self.debug_mode = debug_mode
@@ -158,10 +180,9 @@ def main():
     def handle_transcript(text: str):
         print(f"Transcribed: {text}")
 
-    # Initialize and start transcription
+    # Initialize and start transcription (auto-detects CUDA)
     transcriber = LiveTranscriber(
         model_size="tiny",
-        device="cpu",
         on_transcript=handle_transcript,
         debug_mode=True
     )
@@ -185,3 +206,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
