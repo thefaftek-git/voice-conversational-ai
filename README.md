@@ -17,7 +17,7 @@ This project aims to develop a new voice conversational AI model. The initial im
 
 ### Prerequisites
 
-You'll need Python 3.8+ and pip installed on your system.
+You'll need Python 3.9+ and pip installed on your system.
 
 ### Installation
 
@@ -45,33 +45,58 @@ transcript = transcribe_mp3('path/to/your/audio.mp3')
 print(transcript)
 ```
 
-### Live Audio Transcription
+### Live Audio Transcription (Complete Script)
 
-For real-time transcription from a microphone (auto-detects CUDA):
+Here's a complete script you can run to test live transcription from your microphone:
 
 ```python
+#!/usr/bin/env python3
+"""
+Live transcription demo script.
+Run this file directly to test real-time audio transcription.
+"""
+
+import time
 from src.live_transcription import LiveTranscriber
 
 def handle_transcript(text):
-    print(f"Live transcript: {text}")
+    """Callback function that gets called with each new transcript."""
+    print(f"\n🎤 Transcribed: {text}")
 
-# Initialize and start transcription - auto-detects GPU/CPU
-transcriber = LiveTranscriber(
-    model_size="tiny",  # Options: "tiny", "base", "small", "medium", "large"
-    on_transcript=handle_transcript,
-    debug_mode=True
-)
+def main():
+    """Main function for live transcription demo."""
 
-try:
-    transcriber.start()
-    print("Speak now... Press Ctrl+C to stop")
-    while True:
-        time.sleep(1)  # Keep main thread alive
+    # Initialize the transcriber - auto-detects GPU/CPU
+    transcriber = LiveTranscriber(
+        model_size="tiny",  # Options: "tiny", "base", "small", "medium", "large"
+        on_transcript=handle_transcript,
+        debug_mode=True
+    )
 
-except KeyboardInterrupt:
-    print("\nStopping transcription...")
-finally:
-    transcriber.stop()
+    try:
+        print("🚀 Starting live transcription...")
+        transcriber.start()
+
+        print("\n🎙️  Speak now! (Press Ctrl+C to stop)")
+        print("------------------------------------")
+
+        # Keep the main thread alive while processing
+        while True:
+            latest = transcriber.get_latest_transcript()
+            if latest and "latest" not in locals():
+                print(f"\n📢 Latest transcript: {latest}")
+                latest = None  # Reset to avoid duplicate printing
+
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        print("\n✋ Stopping transcription...")
+    finally:
+        transcriber.stop()
+        print("🛑 Transcription stopped.")
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## Project Structure
@@ -82,6 +107,18 @@ finally:
 - `tests/`: Test files for both transcription modules
 - `requirements.txt`: Python dependencies
 - `README.md`: This file
+
+## Running the Demo Script
+
+1. Save the live transcription script above to a file (e.g., `demo_live_transcription.py`)
+2. Make it executable:
+   ```bash
+   chmod +x demo_live_transcription.py
+   ```
+3. Run the script:
+   ```bash
+   ./demo_live_transcription.py
+   ```
 
 ## Contributing
 
